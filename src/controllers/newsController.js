@@ -49,10 +49,10 @@ module.exports = {
     } else {
       const searchOptions = `/search?q=${question}`;
       const topNewsOptions = `/top-headlines?category=${category}`;
-
+      const otherParams = `&apikey=${process.env.G_NEWS_API_KEY}&lang=${lang}&country=${country}&max=${limit}`;
       const urlOption = type === "" ? searchOptions : topNewsOptions;
 
-      const url = `${baseUrl}${urlOption}&apikey=${process.env.G_NEWS_API_KEY}&lang=${lang}&country=${country}&max=${limit}`;
+      const url = `${baseUrl}${urlOption}${otherParams}`;
       const resp = await fetch(url, { method: "GET" });
       const jsonData = await resp?.json();
 

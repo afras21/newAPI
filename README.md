@@ -10,6 +10,15 @@ G_NEWS_API_KEY=<you_api_key_from g_news>
 
 ```
 
+## Setup redis
+```sh
+brew install redis
+brew services start redis  # start redis services
+redis-cli                  # check if redis is running
+brew services stop redis   # stop redis services
+
+```
+
 Install the dependencies and devDependencies and start the server.
 
 ```sh
