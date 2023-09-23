@@ -16,7 +16,7 @@ const baseUrl = constants.GNEWS_BASE_URL;
  * @param type - type of news top or other
  * @param language - language of new, defaults to en
  * @param country - client can query countries defaults to india refer countries to https://gnews.io/docs/v4#countries
- * 
+ *
  */
 module.exports = {
   fetchNews: async (req, res) => {
@@ -29,12 +29,18 @@ module.exports = {
       country = "in",
     } = req?.query ?? {};
 
+    /**
+     * max limit is 100
+     */
+    if(limit > 100) {
+        req.query['limit'] = 100;
+    }
     const searchOptions = `/search?q=${question}&max=${limit}`;
     const topNewsOptions = `/top-headlines?category=${category}`;
 
     const urlOption = type === "" ? searchOptions : topNewsOptions;
 
-    const url = `${baseUrl}${urlOption}&apikey=${process.env.G_NEWS_API_KEY}&lang=${lang}`;
+    const url = `${baseUrl}${urlOption}&apikey=${process.env.G_NEWS_API_KEY}&lang=${lang}&country=${country}`;
     const resp = await fetch(url, { method: "GET" });
     const jsonData = await resp?.json();
 
