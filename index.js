@@ -3,10 +3,6 @@ const bodyParser = require("body-parser");
 const dotenv = require("dotenv");
 dotenv.config();
 
-/**
- * @todo 2. do code cleanup
- * @todo 3. add test cases
- */
 const app = express();
 app.use(bodyParser.json());
 

@@ -1,5 +1,6 @@
 const httpStatus = require("http-status");
 const constants = require("../config/constants");
+const { redisClient } = require("../helpers/redisHelper");
 const baseUrl = constants.GNEWS_BASE_URL;
 
 /**
@@ -32,18 +33,31 @@ module.exports = {
     /**
      * max limit is 100
      */
-    if(limit > 100) {
-        req.query['limit'] = 100;
+    if (limit > 100) {
+      req.query["limit"] = 100;
     }
-    const searchOptions = `/search?q=${question}`;
-    const topNewsOptions = `/top-headlines?category=${category}`;
 
-    const urlOption = type === "" ? searchOptions : topNewsOptions;
+    // redis cache key
+    const cacheKey = `${question}_${limit}_${category}_${lang}_${country}`;
+    const cachedResult = await redisClient.get(cacheKey);
+    if (cachedResult) {
+      res.status(httpStatus.OK).json({
+        fromCache: true,
+        success: true,
+        data: JSON.parse(cachedResult),
+      });
+    } else {
+      const searchOptions = `/search?q=${question}`;
+      const topNewsOptions = `/top-headlines?category=${category}`;
 
-    const url = `${baseUrl}${urlOption}&apikey=${process.env.G_NEWS_API_KEY}&lang=${lang}&country=${country}&max=${limit}`;
-    const resp = await fetch(url, { method: "GET" });
-    const jsonData = await resp?.json();
+      const urlOption = type === "" ? searchOptions : topNewsOptions;
 
-    res.status(httpStatus.OK).json({ success: true, data: jsonData });
+      const url = `${baseUrl}${urlOption}&apikey=${process.env.G_NEWS_API_KEY}&lang=${lang}&country=${country}&max=${limit}`;
+      const resp = await fetch(url, { method: "GET" });
+      const jsonData = await resp?.json();
+
+      await redisClient.set(cacheKey, JSON.stringify(jsonData));
+      res.status(httpStatus.OK).json({ success: true, data: jsonData });
+    }
   },
 };
