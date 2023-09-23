@@ -15,6 +15,8 @@ const baseUrl = constants.GNEWS_BASE_URL;
  * @param category - category of news ->{only for top news}
  * @param type - type of news top or other
  * @param language - language of new, defaults to en
+ * @param country - client can query countries defaults to india refer countries to https://gnews.io/docs/v4#countries
+ * 
  */
 module.exports = {
   fetchNews: async (req, res) => {
@@ -24,6 +26,7 @@ module.exports = {
       category = "general",
       type = "",
       lang = "en",
+      country = "in",
     } = req?.query ?? {};
 
     const searchOptions = `/search?q=${question}&max=${limit}`;
