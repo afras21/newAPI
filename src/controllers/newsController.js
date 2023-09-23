@@ -35,12 +35,12 @@ module.exports = {
     if(limit > 100) {
         req.query['limit'] = 100;
     }
-    const searchOptions = `/search?q=${question}&max=${limit}`;
+    const searchOptions = `/search?q=${question}`;
     const topNewsOptions = `/top-headlines?category=${category}`;
 
     const urlOption = type === "" ? searchOptions : topNewsOptions;
 
-    const url = `${baseUrl}${urlOption}&apikey=${process.env.G_NEWS_API_KEY}&lang=${lang}&country=${country}`;
+    const url = `${baseUrl}${urlOption}&apikey=${process.env.G_NEWS_API_KEY}&lang=${lang}&country=${country}&max=${limit}`;
     const resp = await fetch(url, { method: "GET" });
     const jsonData = await resp?.json();
 
